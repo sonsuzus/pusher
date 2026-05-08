@@ -40,15 +40,21 @@ app.initializers.add('flarum-pusher', () => {
         setting: 'flarum-pusher.app_host',
         label: 'Host (örn: 127.0.0.1 veya soketi.site.com)',
         type: 'text',
-    })
+    },
+     -10
+    )
     .registerSetting({
         setting: 'flarum-pusher.app_port',
         label: 'Port (örn: 6001)',
         type: 'number',
-    })
+    },
+     -20
+    )
     .registerSetting({
         setting: 'flarum-pusher.app_scheme',
         label: 'Scheme (http veya https)',
         type: 'text',
-    });
+    },
+     -30
+    );
 });
