@@ -24,12 +24,20 @@ class PusherProvider extends AbstractServiceProvider
             if ($cluster = $settings->get('flarum-pusher.app_cluster')) {
                 $options['cluster'] = $cluster;
             }
+            if ($host = $settings->get('flarum-pusher.app_host')) {
+                $options['host'] = $host;
+            }
+            if ($port = $settings->get('flarum-pusher.app_port')) {
+                $options['port'] = $port;
+            }
+            if ($scheme = $settings->get('flarum-pusher.app_scheme')) {
+                $options['scheme'] = $scheme;
+            }
 
             return new \Pusher(
                 $settings->get('flarum-pusher.app_key'),
                 $settings->get('flarum-pusher.app_secret'),
                 $settings->get('flarum-pusher.app_id'),
-                // @phpstan-ignore-next-line
                 $options
             );
         });

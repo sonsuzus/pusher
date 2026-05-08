@@ -34,5 +34,21 @@ app.initializers.add('flarum-pusher', () => {
         type: 'text',
       },
       0
-    );
+    )
+    // BURADAN İTİBAREN YENİ EKLENENLER:
+    .registerSetting({
+        setting: 'flarum-pusher.app_host',
+        label: 'Host (örn: 127.0.0.1 veya soketi.site.com)',
+        type: 'text',
+    })
+    .registerSetting({
+        setting: 'flarum-pusher.app_port',
+        label: 'Port (örn: 6001)',
+        type: 'number',
+    })
+    .registerSetting({
+        setting: 'flarum-pusher.app_scheme',
+        label: 'Scheme (http veya https)',
+        type: 'text',
+    });
 });

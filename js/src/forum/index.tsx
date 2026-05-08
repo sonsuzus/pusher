@@ -19,11 +19,10 @@ export type PusherBinding = {
 
 app.initializers.add('flarum-pusher', () => {
   app.pusher = (async () => {
-    // @ts-expect-error
-    await import('//cdn.jsdelivr.net/npm/pusher-js@7.0.3/dist/web/pusher.min.js' /* webpackIgnore: true, webpackPrefetch: true */);
+    // @ts-ignore
+    const { default: Pusher } = (await import('pusher-js')) as any;
 
-    // @ts-expect-error Imported dynamically
-    const socket: PusherTypes.default = new Pusher(app.forum.attribute('pusherKey'), {
+    const options: any = {
       authEndpoint: `${app.forum.attribute('apiUrl')}/pusher/auth`,
       cluster: app.forum.attribute('pusherCluster'),
       auth: {
@@ -31,15 +30,32 @@ app.initializers.add('flarum-pusher', () => {
           'X-CSRF-Token': app.session.csrfToken,
         },
       },
-    });
-
-    return {
-      channels: {
-        main: socket.subscribe('public'),
-        user: app.session.user ? socket.subscribe(`private-user${app.session.user.id()}`) : null,
-      },
-      pusher: socket,
     };
+
+    // Özel sunucu (Soketi/Laravel Echo Server) ayarlarını alıyoruz
+    const host = app.forum.attribute('pusherHost');
+    const port = app.forum.attribute('pusherPort');
+    const scheme = app.forum.attribute('pusherScheme');
+
+    if (host) {
+      options.wsHost = host;
+    }
+
+    if (port) {
+      options.wsPort = port;
+      options.wssPort = port;
+    }
+
+    if (scheme === 'http') {
+      options.forceTLS = false;
+      options.disableStats = true;
+      options.enabledTransports = ['ws', 'wss'];
+    } else if (scheme === 'https') {
+      options.forceTLS = true;
+      options.disableStats = true;
+    }
+
+    return new Pusher(app.forum.attribute('pusherKey'), options);
   })();
 
   app.pushedUpdates = [];
