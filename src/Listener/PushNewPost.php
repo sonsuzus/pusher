@@ -14,7 +14,7 @@ use Flarum\Post\Event\Posted;
 use Flarum\User\Guest;
 use Flarum\User\User;
 use Illuminate\Support\Str;
-use Pusher;
+use Pusher\Pusher;
 
 class PushNewPost
 {
