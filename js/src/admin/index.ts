@@ -38,7 +38,7 @@ app.initializers.add('flarum-pusher', () => {
     // BURADAN İTİBAREN YENİ EKLENENLER:
     .registerSetting({
         setting: 'flarum-pusher.app_host',
-        label: 'Host (örn: 127.0.0.1 veya soketi.site.com)',
+        label: app.translator.trans('flarum-pusher.admin.pusher_settings.app_host_label'),
         type: 'text',
     },
      -10

@@ -14,6 +14,9 @@ flarum-pusher:
       app_key_label: App Key
       app_secret_label: App Secret
       title: Pusher Settings
+      app_host_label: Host (örn: 127.0.0.1 veya soketi.site.com)
+      app_port_label: Port (örn: 6001)
+      app_scheme_label: Scheme (http veya https )
 
   # Translations in this namespace are used by the admin interface.
   forum:
