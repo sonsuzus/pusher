@@ -31,12 +31,17 @@ return [
         ->driver('pusher', PusherNotificationDriver::class),
 
     (new Extend\Settings())
-        ->serializeToForum('pusherKey', 'flarum-pusher.app_key')
-        ->serializeToForum('pusherCluster', 'flarum-pusher.app_cluster')
-        // YENİ EKLENENLER
-        ->serializeToForum('pusherHost', 'flarum-pusher.app_host')
-        ->serializeToForum('pusherPort', 'flarum-pusher.app_port')
-        ->serializeToForum('pusherScheme', 'flarum-pusher.app_scheme'),
+    ->serializeToForum('pusherKey', 'flarum-pusher.app_key')
+    ->serializeToForum('pusherCluster', 'flarum-pusher.app_cluster')
+    ->serializeToForum('pusherHost', 'flarum-pusher.app_host', function ($value) {
+        return $value ?: ''; // null ise boş string döndür
+    })
+    ->serializeToForum('pusherPort', 'flarum-pusher.app_port', function ($value) {
+        return $value ?: '6001'; // varsayılan port
+    })
+    ->serializeToForum('pusherScheme', 'flarum-pusher.app_scheme', function ($value) {
+        return $value ?: 'http';
+    } ),
 
     (new Extend\Event())
         ->listen(Posted::class, Listener\PushNewPost::class),
