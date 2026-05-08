@@ -45,10 +45,7 @@
             "title": "Sonsuzus Pusher (Soketi)",
             "category": "feature",
             "icon": {
-                "image": "icon.png",
-                "backgroundSize": "46% 63%",
-                "backgroundPosition": "center",
-                "backgroundRepeat": "no-repeat",
+                "name": "fas fa-broadcast-tower",
                 "backgroundColor": "#1e293b",
                 "color": "#fff"
             }
