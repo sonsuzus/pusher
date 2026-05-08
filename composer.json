@@ -1,26 +1,33 @@
 {
-    "name": "flarum/pusher",
-    "description": "See new discussions and posts in real-time using Pusher.",
+    "name": "sonsuzus/pusher",
+    "description": "Soketi destekli özel Pusher eklentisi.",
     "type": "flarum-extension",
     "keywords": [
-        "discussion"
+        "discussion",
+        "websocket",
+        "soketi",
+        "pusher"
     ],
     "license": "MIT",
-    "support": {
-        "issues": "https://github.com/flarum/framework/issues",
-        "source": "https://github.com/flarum/pusher",
-        "forum": "https://discuss.flarum.org"
-    },
-    "homepage": "https://flarum.org",
-    "funding": [
+    "authors": [
         {
-            "type": "website",
-            "url": "https://flarum.org/donate/"
+            "name": "sonsuz",
+            "email": "sonsuzus@gmail.com",
+            "role": "Developer"
         }
     ],
+    "support": {
+        "issues": "https://github.com/sonsuzus/pusher/issues",
+        "source": "https://github.com/sonsuzus/pusher",
+        "forum": "https://sonsuz.us"
+    },
+    "homepage": "https://sonsuz.us",
+    "replace": {
+        "flarum/pusher": "*"
+    },
     "require": {
         "flarum/core": "^1.8",
-        "pusher/pusher-php-server": "^2.2"
+        "pusher/pusher-php-server": "^7.0"
     },
     "require-dev": {
         "flarum/tags": "^1.0"
@@ -35,14 +42,14 @@
             "dev-main": "1.x-dev"
         },
         "flarum-extension": {
-            "title": "Pusher",
+            "title": "Sonsuzus Pusher (Soketi)",
             "category": "feature",
             "icon": {
                 "image": "icon.png",
                 "backgroundSize": "46% 63%",
                 "backgroundPosition": "center",
                 "backgroundRepeat": "no-repeat",
-                "backgroundColor": "#40bad8",
+                "backgroundColor": "#1e293b",
                 "color": "#fff"
             }
         },
@@ -64,12 +71,6 @@
             }
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../*/*"
-        }
-    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }

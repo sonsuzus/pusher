@@ -55,7 +55,22 @@ app.initializers.add('flarum-pusher', () => {
       options.disableStats = true;
     }
 
-    return new Pusher(app.forum.attribute('pusherKey'), options);
+    const pusherInstance = new Pusher(app.forum.attribute('pusherKey'), options);
+
+// Kanallara abone ol
+const mainChannel = pusherInstance.subscribe('public');
+const userChannel = app.session.user
+  ? pusherInstance.subscribe(`private-user${app.session.user.id()}`)
+  : null;
+
+// PusherBinding şeklinde döndür
+return {
+  pusher: pusherInstance,
+  channels: {
+    main: mainChannel,
+    user: userChannel,
+  },
+};
   })();
 
   app.pushedUpdates = [];
@@ -165,8 +180,8 @@ app.initializers.add('flarum-pusher', () => {
       channels.user.bind('notification', () => {
         if (app.session.user) {
           app.session.user.pushAttributes({
-            unreadNotificationCount: app.session.user.unreadNotificationCount() ?? 0 + 1,
-            newNotificationCount: app.session.user.newNotificationCount() ?? 0 + 1,
+            unreadNotificationCount: (app.session.user.unreadNotificationCount() ?? 0) + 1,
+            newNotificationCount:    (app.session.user.newNotificationCount()    ?? 0) + 1,
           });
         }
         app.notifications.clear();
