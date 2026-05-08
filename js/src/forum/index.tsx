@@ -1,4 +1,5 @@
 import * as PusherTypes from 'pusher-js';
+import m from 'mithril'; // KRİTİK: Mithril mutlaka eklenmeli
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import DiscussionList from 'flarum/forum/components/DiscussionList';
@@ -17,12 +18,12 @@ export type PusherBinding = {
   pusher: PusherTypes.default;
 };
 
-app.initializers.add('flarum-pusher', () => {
+// İsimlendirmeyi admin ile uyumlu hale getirdik
+app.initializers.add('sonsuzus-pusher', () => {
   const pusherKey = app.forum.attribute('pusherKey');
 
-  // Eğer ayar veritabanında yoksa veya boşsa Pusher'ı başlatma
   if (!pusherKey) {
-    console.warn('Pusher eklentisi: pusherKey eksik olduğu için başlatılamadı.');
+    console.warn('Sonsuzus Pusher: pusherKey eksik olduğu için başlatılamadı.');
     return;
   }
 
@@ -107,23 +108,23 @@ app.initializers.add('flarum-pusher', () => {
     });
   });
 
-  extend(DiscussionList.prototype, 'view', function (this: DiscussionList, vdom: Children) {
+  extend(DiscussionList.prototype, 'view', function (this: any, vdom: Children) {
     if (app.pushedUpdates && app.pushedUpdates.length) {
       const count = app.pushedUpdates.length;
-      if (typeof vdom === 'object' && vdom && 'children' in vdom && vdom.children instanceof Array) {
+      if (typeof vdom === 'object' && vdom && 'children' in vdom && Array.isArray(vdom.children)) {
         vdom.children.unshift(
           <Button
             className="Button Button--block DiscussionList-update"
             onclick={() => {
+              this.loadingUpdated = true;
               this.attrs.state.refresh().then(() => {
                 this.loadingUpdated = false;
                 app.pushedUpdates = [];
                 app.setTitleCount(0);
                 m.redraw();
               });
-              this.loadingUpdated = true;
             }}
-            loading={this.loadingUpdated}
+            loading={this.loadingUpdated || false}
           >
             {app.translator.trans('flarum-pusher.forum.discussion_list.show_updates_text', { count })}
           </Button>
