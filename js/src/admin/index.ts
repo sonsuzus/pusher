@@ -1,8 +1,11 @@
 import app from 'flarum/admin/app';
 
-app.initializers.add('flarum-pusher', () => {
+// Başlatıcı adını 'sonsuzus-pusher' olarak güncellemek çakışmaları önler
+app.initializers.add('sonsuzus-pusher', () => {
   app.extensionData
-    .for('flarum-pusher')
+    // KRİTİK DÜZELTME: 'flarum-pusher' yerine 'sonsuzus-pusher' olmalı.
+    // composer.json'daki "sonsuzus/pusher" ismine karşılık gelir.
+    .for('sonsuzus-pusher') 
     .registerSetting(
       {
         setting: 'flarum-pusher.app_id',
@@ -35,7 +38,6 @@ app.initializers.add('flarum-pusher', () => {
       },
       0
     )
-    // BURADAN İTİBAREN YENİ EKLENENLER:
     .registerSetting({
         setting: 'flarum-pusher.app_host',
         label: app.translator.trans('flarum-pusher.admin.pusher_settings.app_host_label'),
