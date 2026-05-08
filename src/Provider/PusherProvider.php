@@ -16,7 +16,7 @@ class PusherProvider extends AbstractServiceProvider
 {
     public function register()
     {
-        $this->app->bind(\Pusher::class, function () {
+        $this->app->bind(Pusher::class, function () {
             $settings = $this->app->make(SettingsRepositoryInterface::class);
 
             $options = [];
