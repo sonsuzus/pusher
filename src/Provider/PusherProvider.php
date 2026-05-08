@@ -1,18 +1,23 @@
+<?php
+
 namespace Flarum\Pusher\Provider;
 
 use Flarum\Foundation\AbstractServiceProvider;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Pusher\Pusher; // Sınıfı import edin
+use Pusher\Pusher;
 
 class PusherProvider extends AbstractServiceProvider
 {
     public function register()
     {
-        // Doğru sınıf adını bind edin
+        // Pusher sınıfını IoC konteynerine bağlayalım
         $this->app->bind(Pusher::class, function () {
+            /** @var SettingsRepositoryInterface $settings */
             $settings = $this->app->make(SettingsRepositoryInterface::class);
+
             $options = [];
 
+            // Ayarların varlığını kontrol ederek options dizisini oluşturalım
             if ($cluster = $settings->get('flarum-pusher.app_cluster')) {
                 $options['cluster'] = $cluster;
             }
@@ -26,11 +31,10 @@ class PusherProvider extends AbstractServiceProvider
                 $options['scheme'] = $scheme;
             }
 
-            // Tam namespace ile yeni bir Pusher objesi oluşturun
             return new Pusher(
-                $settings->get('flarum-pusher.app_key'),
-                $settings->get('flarum-pusher.app_secret'),
-                $settings->get('flarum-pusher.app_id'),
+                (string) $settings->get('flarum-pusher.app_key'),
+                (string) $settings->get('flarum-pusher.app_secret'),
+                (string) $settings->get('flarum-pusher.app_id'),
                 $options
             );
         });
