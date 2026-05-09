@@ -19,7 +19,13 @@ class PusherProvider extends AbstractServiceProvider
         $this->app->bind(\Pusher::class, function () {
             $settings = $this->app->make(SettingsRepositoryInterface::class);
 
-            $options = [];
+            $options = [
+                'host' => 'soketi.sessizbilgi.com',
+                'port' => 443,
+                'scheme' => 'https',
+                'encrypted' => true,
+                'useTLS' => true,
+            ];
 
             if ($cluster = $settings->get('flarum-pusher.app_cluster')) {
                 $options['cluster'] = $cluster;
