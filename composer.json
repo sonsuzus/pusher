@@ -1,6 +1,6 @@
 {
-    "name": "flarum/pusher",
-    "description": "See new discussions and posts in real-time using Pusher.",
+    "name": "sonsuzus/pusher",
+    "description": "Tam zamanli soketi pusher.",
     "type": "flarum-extension",
     "keywords": [
         "discussion"
