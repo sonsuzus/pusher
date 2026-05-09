@@ -1,8 +1,8 @@
 import app from 'flarum/admin/app';
 
-app.initializers.add('flarum-pusher', () => {
+app.initializers.add('sonsuzus-pusher', () => {
   app.extensionData
-    .for('flarum-pusher')
+    .for('sonsuzus-pusher')
     .registerSetting(
       {
         setting: 'flarum-pusher.app_id',
