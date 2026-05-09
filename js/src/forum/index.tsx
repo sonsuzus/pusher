@@ -26,6 +26,12 @@ app.initializers.add('flarum-pusher', () => {
     const socket: PusherTypes.default = new Pusher(app.forum.attribute('pusherKey'), {
       authEndpoint: `${app.forum.attribute('apiUrl')}/pusher/auth`,
       cluster: app.forum.attribute('pusherCluster'),
+      wsHost: 'soketi.sessizbilgi.com',
+      wsPort: 443,
+      wssPort: 443,
+      forceTLS: true,
+      disableStats: true,
+      enabledTransports: ['ws', 'wss'],
       auth: {
         headers: {
           'X-CSRF-Token': app.session.csrfToken,
