@@ -31,21 +31,16 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-main": "1.x-dev"
-        },
         "flarum-extension": {
-            "title": "Pusher",
+            "title": "Soketi (Sonsuzus)",
             "category": "feature",
             "icon": {
-                "image": "icon.png",
-                "backgroundSize": "46% 63%",
-                "backgroundPosition": "center",
-                "backgroundRepeat": "no-repeat",
-                "backgroundColor": "#40bad8",
+                "name": "fas fa-bolt",
+                "backgroundColor": "#311b58",
                 "color": "#fff"
             }
-        },
+        }
+    },
         "flarum-cli": {
             "modules": {
                 "admin": true,
