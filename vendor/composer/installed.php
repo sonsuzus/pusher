@@ -1,14 +1,12 @@
 <?php return array(
     'root' => array(
-        'name' => 'flarum/pusher',
+        'name' => 'sonsuzus/pusher',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '445cb96c14b959381587296d1aacdf8f5846275c',
+        'reference' => 'e425d10f74c0f734c98d1c37ffaf3085273cb53a',
         'type' => 'flarum-extension',
         'install_path' => __DIR__ . '/../../',
-        'aliases' => array(
-            0 => '1.x-dev',
-        ),
+        'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
@@ -163,17 +161,6 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../flarum/core',
             'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'flarum/pusher' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => '445cb96c14b959381587296d1aacdf8f5846275c',
-            'type' => 'flarum-extension',
-            'install_path' => __DIR__ . '/../../',
-            'aliases' => array(
-                0 => '1.x-dev',
-            ),
             'dev_requirement' => false,
         ),
         'flarum/tags' => array(
@@ -754,8 +741,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0|2.0',
-                1 => '1.0.0',
+                0 => '1.0.0',
+                1 => '1.0|2.0',
             ),
         ),
         'psr/simple-cache' => array(
@@ -839,6 +826,15 @@
             'reference' => 'bec02b24b78e4bc292c731b334d7cd31be72c3c7',
             'type' => 'library',
             'install_path' => __DIR__ . '/../s9e/text-formatter',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'sonsuzus/pusher' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'e425d10f74c0f734c98d1c37ffaf3085273cb53a',
+            'type' => 'flarum-extension',
+            'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
