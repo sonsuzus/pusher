@@ -39,8 +39,7 @@
                 "backgroundColor": "#311b58",
                 "color": "#fff"
             }
-        }
-    },
+        },
         "flarum-cli": {
             "modules": {
                 "admin": true,
