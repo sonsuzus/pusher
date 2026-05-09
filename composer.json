@@ -1,21 +1,18 @@
 {
     "name": "sonsuzus/pusher",
-    "description": "Tam zamanli soketi pusher.",
+    "description": "Flarum için Soketi (Sonsuzus) destekli gerçek zamanlı bildirim eklentisi.",
     "type": "flarum-extension",
     "keywords": [
-        "discussion"
+        "discussion",
+        "soketi",
+        "pusher",
+        "websocket"
     ],
     "license": "MIT",
-    "support": {
-        "issues": "https://github.com/flarum/framework/issues",
-        "source": "https://github.com/flarum/pusher",
-        "forum": "https://discuss.flarum.org"
-    },
-    "homepage": "https://flarum.org",
-    "funding": [
+    "authors": [
         {
-            "type": "website",
-            "url": "https://flarum.org/donate/"
+            "name": "SonsuzUs",
+            "role": "Developer"
         }
     ],
     "require": {
