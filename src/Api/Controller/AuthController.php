@@ -44,6 +44,14 @@ class AuthController implements RequestHandlerInterface
         $body = $request->getParsedBody();
 
         if (Arr::get($body, 'channel_name') === $userChannel) {
+            $options = [
+                'host' => 'soketi.sessizbilgi.com',
+                'port' => 443,
+                'scheme' => 'https',
+                'encrypted' => true,
+                'useTLS' => true,
+                'cluster' => $this->settings->get('flarum-pusher.app_cluster')
+            ];
             $pusher = new Pusher(
                 $this->settings->get('flarum-pusher.app_key'),
                 $this->settings->get('flarum-pusher.app_secret'),
