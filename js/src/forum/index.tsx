@@ -7,10 +7,6 @@ import IndexPage from 'flarum/forum/components/IndexPage';
 import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import type { Children } from 'mithril';
-// ESKİ:
-// import type Tag from 'flarum/tags/common/models/Tag';
-
-// YENİ:
 import type Tag from 'ext:flarum/tags/common/models/Tag';
 
 export type PusherBinding = {
@@ -54,41 +50,45 @@ app.initializers.add('flarum-pusher', () => {
 
   app.pushedUpdates = [];
 
-  extend(DiscussionList.prototype, 'oncreate', function () {
-    app.pusher.then((binding: PusherBinding) => {
-      const pusher = binding.pusher;
+  extend(DiscussionList.prototype, 'oncreate', function (this: DiscussionList) {
+    this.boundNewPostHandler = (data: { tagIds: number[]; discussionId: number }) => {
+      // app.discussions yerine component içindeki state kullanılıyor (Flarum 2.0)
+      const params = this.attrs.state.getParams();
 
-      pusher.bind('newPost', (data: { tagIds: string[]; discussionId: number }) => {
-        const params = app.discussions.getParams();
+      if (!params.q && !params.sort && !params.filter) {
+        if (params.tags) {
+          const tag = app.store.getBy<Tag>('tags', 'slug', params.tags as string);
+          const tagId = tag?.id();
 
-        if (!params.q && !params.sort && !params.filter) {
-          if (params.tags) {
-            const tag = app.store.getBy<Tag>('tags', 'slug', params.tags);
-            const tagId = tag?.id();
-
-            if (!tagId || !data.tagIds.includes(tagId)) return;
-          }
-
-          const id = String(data.discussionId);
-
-          if ((!app.current.get('discussion') || id !== app.current.get('discussion').id()) && app.pushedUpdates.indexOf(id) === -1) {
-            app.pushedUpdates.push(id);
-
-            if (app.current.matches(IndexPage)) {
-              app.setTitleCount(app.pushedUpdates.length);
-            }
-
-            m.redraw();
-          }
+          // Array koruması eklendi ve veriler String'e çevrilerek eşitlendi
+          if (!tagId || !(data.tagIds || []).map(String).includes(tagId)) return;
         }
-      });
+
+        const id = String(data.discussionId);
+
+        if ((!app.current.get('discussion') || id !== app.current.get('discussion').id()) && app.pushedUpdates.indexOf(id) === -1) {
+          app.pushedUpdates.push(id);
+
+          if (app.current.matches(IndexPage)) {
+            app.setTitleCount(app.pushedUpdates.length);
+          }
+
+          m.redraw();
+        }
+      }
+    };
+
+    app.pusher.then((binding: PusherBinding) => {
+      binding.pusher.bind('newPost', this.boundNewPostHandler);
     });
   });
 
-  extend(DiscussionList.prototype, 'onremove', function () {
-    app.pusher.then((binding: PusherBinding) => {
-      binding.pusher.unbind('newPost');
-    });
+  extend(DiscussionList.prototype, 'onremove', function (this: DiscussionList) {
+    if (this.boundNewPostHandler) {
+      app.pusher.then((binding: PusherBinding) => {
+        binding.pusher.unbind('newPost', this.boundNewPostHandler);
+      });
+    }
   });
 
   extend(DiscussionList.prototype, 'view', function (this: DiscussionList, vdom: Children) {
@@ -118,34 +118,35 @@ app.initializers.add('flarum-pusher', () => {
   });
 
   extend(DiscussionPage.prototype, 'oncreate', function (this: DiscussionPage) {
+    this.boundNewPostHandler = (data: { discussionId: number }) => {
+      const id = String(data.discussionId);
+      const discussionId = this.discussion?.id();
+
+      if (this.discussion && discussionId === id && this.stream) {
+        const oldCount = this.discussion.commentCount() ?? 0;
+
+        app.store.find('discussions', discussionId).then(() => {
+          this.stream?.update().then(m.redraw);
+
+          if (!document.hasFocus()) {
+            app.setTitleCount(Math.max(0, (this.discussion?.commentCount() ?? 0) - oldCount));
+            window.addEventListener('focus', () => app.setTitleCount(0), { once: true });
+          }
+        });
+      }
+    };
+
     app.pusher.then((binding: PusherBinding) => {
-      const pusher = binding.pusher;
-
-      pusher.bind('newPost', (data: { discussionId: number }) => {
-        const id = String(data.discussionId);
-        const discussionId = this.discussion?.id();
-
-        if (this.discussion && discussionId === id && this.stream) {
-          const oldCount = this.discussion.commentCount() ?? 0;
-
-          app.store.find('discussions', discussionId).then(() => {
-            this.stream?.update().then(m.redraw);
-
-            if (!document.hasFocus()) {
-              app.setTitleCount(Math.max(0, (this.discussion?.commentCount() ?? 0) - oldCount));
-
-              window.addEventListener('focus', () => app.setTitleCount(0), { once: true });
-            }
-          });
-        }
-      });
+      binding.pusher.bind('newPost', this.boundNewPostHandler);
     });
   });
 
-  extend(DiscussionPage.prototype, 'onremove', function () {
-    app.pusher.then((binding: PusherBinding) => {
-      binding.pusher.unbind('newPost');
-    });
+  extend(DiscussionPage.prototype, 'onremove', function (this: DiscussionPage) {
+    if (this.boundNewPostHandler) {
+      app.pusher.then((binding: PusherBinding) => {
+        binding.pusher.unbind('newPost', this.boundNewPostHandler);
+      });
+    }
   });
 
   extend(IndexPage.prototype, 'actionItems', (items: ItemList<Children>) => {
@@ -159,8 +160,8 @@ app.initializers.add('flarum-pusher', () => {
       channels.user.bind('notification', () => {
         if (app.session.user) {
           app.session.user.pushAttributes({
-            unreadNotificationCount: app.session.user.unreadNotificationCount() ?? 0 + 1,
-            newNotificationCount: app.session.user.newNotificationCount() ?? 0 + 1,
+            unreadNotificationCount: (app.session.user.unreadNotificationCount() ?? 0) + 1,
+            newNotificationCount: (app.session.user.newNotificationCount() ?? 0) + 1,
           });
         }
         app.notifications.clear();

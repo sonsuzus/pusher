@@ -9,7 +9,6 @@ declare module 'flarum/forum/ForumApplication' {
       };
       pusher: PusherTypes.default;
     }>;
-
     pushedUpdates: Array<any>;
   }
 }
@@ -17,5 +16,12 @@ declare module 'flarum/forum/ForumApplication' {
 declare module 'flarum/forum/components/DiscussionList' {
   export default interface DiscussionList {
     loadingUpdated?: boolean;
+    boundNewPostHandler?: Function;
+  }
+}
+
+declare module 'flarum/forum/components/DiscussionPage' {
+  export default interface DiscussionPage {
+    boundNewPostHandler?: Function;
   }
 }
