@@ -1,1 +1,48 @@
-vendor/
+# Dependency directories
+node_modules/
+pnpm-lock.yaml
+package-lock.json # (Opsiyonel: Eğer yarn kullanıyorsan bunu gizleyebilirsin ama npm kullanıyorsan bu satırı SİL, package-lock git'te olmalıdır)
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Build / Output directories
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# dotenv environment variable files (Şifreler ve API keyler)
+.env
+.env.test
+.env.production
+.env.local
+
+# Caches
+.npm
+.eslintcache
+.stylelintcache
+.parcel-cache
+.cache
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS metadata
+.DS_Store
+Thumbs.db
