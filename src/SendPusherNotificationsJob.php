@@ -1,35 +1,23 @@
 <?php
 
-/*
- * This file is part of Flarum.
- *
- * For detailed copyright and license information, please view the
- * LICENSE file that was distributed with this source code.
- */
-
 namespace Flarum\Pusher;
 
 use Flarum\Notification\Blueprint\BlueprintInterface;
-use Flarum\Queue\AbstractJob;
 use Flarum\User\User;
-use Pusher;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\SerializesModels;
+use Pusher\Pusher;
 
-class SendPusherNotificationsJob extends AbstractJob
+class SendPusherNotificationsJob implements ShouldQueue
 {
-    /**
-     * @var BlueprintInterface
-     */
-    private $blueprint;
+    use Queueable, SerializesModels;
 
-    /**
-     * @var User[]
-     */
+    private $blueprint;
     private $recipients;
 
     public function __construct(BlueprintInterface $blueprint, array $recipients)
     {
-        parent::__construct();
-
         $this->blueprint = $blueprint;
         $this->recipients = $recipients;
     }

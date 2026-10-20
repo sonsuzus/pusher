@@ -1,12 +1,5 @@
 <?php
 
-/*
- * This file is part of Flarum.
- *
- * For detailed copyright and license information, please view the
- * LICENSE file that was distributed with this source code.
- */
-
 namespace Flarum\Pusher\Api\Controller;
 
 use Flarum\Http\RequestUtil;
@@ -17,27 +10,17 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Pusher;
+use Pusher\Pusher; // GÜNCELLENDİ
 
 class AuthController implements RequestHandlerInterface
 {
-    /**
-     * @var SettingsRepositoryInterface
-     */
     protected $settings;
 
-    /**
-     * @param SettingsRepositoryInterface $settings
-     */
     public function __construct(SettingsRepositoryInterface $settings)
     {
         $this->settings = $settings;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $userChannel = 'private-user'.RequestUtil::getActor($request)->id;
@@ -52,12 +35,12 @@ class AuthController implements RequestHandlerInterface
                 'useTLS' => true,
                 'cluster' => $this->settings->get('flarum-pusher.app_cluster')
             ];
+
             $pusher = new Pusher(
                 $this->settings->get('flarum-pusher.app_key'),
                 $this->settings->get('flarum-pusher.app_secret'),
                 $this->settings->get('flarum-pusher.app_id'),
-                // @phpstan-ignore-next-line
-                ['cluster' => $this->settings->get('flarum-pusher.app_cluster')]
+                $options
             );
 
             $payload = json_decode($pusher->socket_auth($userChannel, Arr::get($body, 'socket_id')), true);
