@@ -1,7 +1,7 @@
 import app from 'flarum/admin/app';
 
 app.initializers.add('sonsuzus-pusher', () => {
-  app.extensionData
+  app.registry // Flarum 2.0'da extensionData yerine registry kullanılıyor
     .for('sonsuzus-pusher')
     .registerSetting(
       {
