@@ -51,30 +51,37 @@ app.initializers.add('flarum-pusher', () => {
   app.pushedUpdates = [];
 
   extend(DiscussionList.prototype, 'oncreate', function (this: DiscussionList) {
-    this.boundNewPostHandler = (data: { tagIds: number[]; discussionId: number }) => {
-      // app.discussions yerine component içindeki state kullanılıyor (Flarum 2.0)
-      const params = this.attrs.state.getParams();
+    this.boundNewPostHandler = (rawData: any) => {
+      try {
+        // Pusher verisi string geldiyse JSON nesnesine çeviriyoruz (Kritik Çözüm)
+        const data = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+        console.log('[Sonsuzus Pusher] Yeni mesaj işleniyor:', data);
 
-      if (!params.q && !params.sort && !params.filter) {
-        if (params.tags) {
-          const tag = app.store.getBy<Tag>('tags', 'slug', params.tags as string);
-          const tagId = tag?.id();
+        const params = this.attrs.state.getParams();
 
-          // Array koruması eklendi ve veriler String'e çevrilerek eşitlendi
-          if (!tagId || !(data.tagIds || []).map(String).includes(tagId)) return;
-        }
+        if (!params.q && !params.sort && !params.filter) {
+          if (params.tags) {
+            const tag = app.store.getBy<Tag>('tags', 'slug', params.tags as string);
+            const tagId = tag?.id();
 
-        const id = String(data.discussionId);
-
-        if ((!app.current.get('discussion') || id !== app.current.get('discussion').id()) && app.pushedUpdates.indexOf(id) === -1) {
-          app.pushedUpdates.push(id);
-
-          if (app.current.matches(IndexPage)) {
-            app.setTitleCount(app.pushedUpdates.length);
+            if (!tagId || !(data.tagIds || []).map(String).includes(tagId)) return;
           }
 
-          m.redraw();
+          const id = String(data.discussionId);
+
+          if ((!app.current.get('discussion') || id !== app.current.get('discussion').id()) && app.pushedUpdates.indexOf(id) === -1) {
+            app.pushedUpdates.push(id);
+            console.log('[Sonsuzus Pusher] Buton tetiklendi. Bekleyen tartışma sayısı:', app.pushedUpdates.length);
+
+            if (app.current.matches(IndexPage)) {
+              app.setTitleCount(app.pushedUpdates.length);
+            }
+
+            m.redraw();
+          }
         }
+      } catch (e) {
+        console.error('[Sonsuzus Pusher] newPost işlenirken hata oluştu:', e);
       }
     };
 
@@ -91,11 +98,11 @@ app.initializers.add('flarum-pusher', () => {
     }
   });
 
-  extend(DiscussionList.prototype, 'view', function (this: DiscussionList, vdom: Children) {
-    if (app.pushedUpdates) {
+  extend(DiscussionList.prototype, 'view', function (this: DiscussionList, vdom: any) {
+    if (app.pushedUpdates && app.pushedUpdates.length > 0) {
       const count = app.pushedUpdates.length;
 
-      if (count && typeof vdom === 'object' && vdom && 'children' in vdom && vdom.children instanceof Array) {
+      if (vdom && vdom.children && Array.isArray(vdom.children)) {
         vdom.children.unshift(
           <Button
             className="Button Button--block DiscussionList-update"
@@ -118,21 +125,26 @@ app.initializers.add('flarum-pusher', () => {
   });
 
   extend(DiscussionPage.prototype, 'oncreate', function (this: DiscussionPage) {
-    this.boundNewPostHandler = (data: { discussionId: number }) => {
-      const id = String(data.discussionId);
-      const discussionId = this.discussion?.id();
+    this.boundNewPostHandler = (rawData: any) => {
+      try {
+        const data = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+        const id = String(data.discussionId);
+        const discussionId = this.discussion?.id();
 
-      if (this.discussion && discussionId === id && this.stream) {
-        const oldCount = this.discussion.commentCount() ?? 0;
+        if (this.discussion && discussionId === id && this.stream) {
+          const oldCount = this.discussion.commentCount() ?? 0;
 
-        app.store.find('discussions', discussionId).then(() => {
-          this.stream?.update().then(m.redraw);
+          app.store.find('discussions', discussionId).then(() => {
+            this.stream?.update().then(m.redraw);
 
-          if (!document.hasFocus()) {
-            app.setTitleCount(Math.max(0, (this.discussion?.commentCount() ?? 0) - oldCount));
-            window.addEventListener('focus', () => app.setTitleCount(0), { once: true });
-          }
-        });
+            if (!document.hasFocus()) {
+              app.setTitleCount(Math.max(0, (this.discussion?.commentCount() ?? 0) - oldCount));
+              window.addEventListener('focus', () => app.setTitleCount(0), { once: true });
+            }
+          });
+        }
+      } catch (e) {
+        console.error('[Sonsuzus Pusher] DiscussionPage update hatası:', e);
       }
     };
 
@@ -158,6 +170,7 @@ app.initializers.add('flarum-pusher', () => {
 
     if (channels.user) {
       channels.user.bind('notification', () => {
+        console.log('[Sonsuzus Pusher] Yeni bildirim (notification) algılandı.');
         if (app.session.user) {
           app.session.user.pushAttributes({
             unreadNotificationCount: (app.session.user.unreadNotificationCount() ?? 0) + 1,
