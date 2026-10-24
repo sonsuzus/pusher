@@ -28,6 +28,10 @@ app.initializers.add('flarum-pusher', () => {
   // callbacks that fire after boot, so they are safe to register here.
   extend(Application.prototype, 'mount' as any, function () {
     app.pusher = (async () => {
+      // Sunucu adı ayarlıysa (Soketi vb.) ona bağlan, boşsa Pusher bulutunu kullan.
+      const host: string | undefined = app.forum.attribute('pusherHostname') || undefined;
+      const port: number = Number(app.forum.attribute('pusherPort')) || 443;
+
       const socket: Pusher = new Pusher(app.forum.attribute('pusherKey'), {
         authEndpoint: `${app.forum.attribute('apiUrl')}/pusher/auth`,
         cluster: app.forum.attribute('pusherCluster'),
@@ -36,13 +40,12 @@ app.initializers.add('flarum-pusher', () => {
             'X-CSRF-Token': app.session.csrfToken,
           },
         },
-        // Soketi (self-hosted) ayarları
-        wsHost: 'soketi.sessizbilgi.com',
-        wsPort: 443,
-        wssPort: 443,
+        wsHost: host,
+        wsPort: host ? port : undefined,
+        wssPort: host ? port : undefined,
         forceTLS: true,
-        disableStats: true,
-        enabledTransports: ['ws', 'wss'],
+        disableStats: !!host,
+        enabledTransports: host ? ['ws', 'wss'] : undefined,
       });
 
       return {

@@ -13,6 +13,10 @@ flarum-pusher:
       app_id_label: App ID
       app_key_label: App Key
       app_secret_label: App Secret
+      server_hostname_help: Only the host name, without https:// (e.g. soketi.example.com). Leave empty to use the Pusher cloud.
+      server_hostname_label: Server hostname (Soketi / self-hosted)
+      server_port_help: Optional. Leave empty to use the default (443).
+      server_port_label: Server port
       title: Pusher Settings
 
   # Translations in this namespace are used by the admin interface.

@@ -32,7 +32,9 @@ return [
 
     (new Extend\Settings())
         ->serializeToForum('pusherKey', 'flarum-pusher.app_key')
-        ->serializeToForum('pusherCluster', 'flarum-pusher.app_cluster'),
+        ->serializeToForum('pusherCluster', 'flarum-pusher.app_cluster')
+        ->serializeToForum('pusherHostname', 'flarum-pusher.server_hostname')
+        ->serializeToForum('pusherPort', 'flarum-pusher.server_port'),
 
     (new Extend\Event())
         ->listen(Posted::class, Listener\PushNewPost::class),
