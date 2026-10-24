@@ -13,7 +13,13 @@ class PusherProvider extends AbstractServiceProvider
         $this->container->bind(Pusher::class, function () {
             $settings = $this->container->make(SettingsRepositoryInterface::class);
 
-            $options = ['useTLS' => true];
+            // scheme ve port açıkça verilir: pusher-php, useTLS'in https/443 varsayılanını
+            // yalnızca ikisi de verilmemişse uygular (port tek başına verilirse http'ye düşer).
+            $options = [
+                'useTLS' => true,
+                'scheme' => 'https',
+                'port' => (int) $settings->get('flarum-pusher.server_port') ?: 443,
+            ];
 
             if ($cluster = $settings->get('flarum-pusher.app_cluster')) {
                 $options['cluster'] = $cluster;
@@ -22,10 +28,6 @@ class PusherProvider extends AbstractServiceProvider
             // Kendi sunucun (Soketi vb.) için: boş bırakılırsa Pusher bulutu kullanılır.
             if ($host = trim((string) $settings->get('flarum-pusher.server_hostname'))) {
                 $options['host'] = $host;
-            }
-
-            if ($port = (int) $settings->get('flarum-pusher.server_port')) {
-                $options['port'] = $port;
             }
 
             return new Pusher(
